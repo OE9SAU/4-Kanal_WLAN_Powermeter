@@ -5,6 +5,166 @@
 	(uuid "d266b24d-6195-43e8-a1eb-5e1c07e0d0f6")
 	(paper "A4")
 	(lib_symbols
+		(symbol "Connector:Conn_01x02_Pin"
+			(pin_names
+				(offset 1.016) hide)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at 0 2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Conn_01x02_Pin"
+				(at 0 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Generic connector, single row, 01x02, script generated"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_locked" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "connector"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "Connector*:*_1x??_*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "Conn_01x02_Pin_1_1"
+				(polyline
+					(pts
+						(xy 1.27 -2.54) (xy 0.8636 -2.54)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 0) (xy 0.8636 0)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start 0.8636 -2.413)
+					(end 0 -2.667)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(rectangle
+					(start 0.8636 0.127)
+					(end 0 -0.127)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(pin passive line
+					(at 5.08 0 180)
+					(length 3.81)
+					(name "Pin_1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 5.08 -2.54 180)
+					(length 3.81)
+					(name "Pin_2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
 		(symbol "Connector:Conn_01x04_Socket"
 			(pin_names
 				(offset 1.016) hide)
@@ -1732,6 +1892,12 @@
 		(uuid "3ddc7e22-c227-4452-b97b-6c112d8ddbee")
 	)
 	(junction
+		(at 138.43 142.24)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "43cbd083-1597-4462-bae0-cca7139101ff")
+	)
+	(junction
 		(at 168.275 155.575)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1754,6 +1920,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "5dcaef53-9aab-42b2-abae-2f19166e258b")
+	)
+	(junction
+		(at 138.43 128.27)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "64a72e7b-80cb-4a05-8912-8dc4220c3d16")
 	)
 	(junction
 		(at 30.48 64.77)
@@ -2182,6 +2354,26 @@
 			(type default)
 		)
 		(uuid "2ee03db4-63ea-4dfd-a47f-959e61b654ad")
+	)
+	(wire
+		(pts
+			(xy 143.51 142.24) (xy 138.43 142.24)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2f22373f-4364-4105-b349-0e52941b958c")
+	)
+	(wire
+		(pts
+			(xy 138.43 142.24) (xy 138.43 182.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "31f0a942-656a-42f7-a601-17bf53110e89")
 	)
 	(wire
 		(pts
@@ -2685,7 +2877,7 @@
 	)
 	(wire
 		(pts
-			(xy 138.43 137.16) (xy 138.43 182.88)
+			(xy 138.43 137.16) (xy 138.43 142.24)
 		)
 		(stroke
 			(width 0)
@@ -2845,6 +3037,16 @@
 	)
 	(wire
 		(pts
+			(xy 138.43 128.27) (xy 138.43 121.92)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "beda5cfc-f078-4f91-a203-05bce565e854")
+	)
+	(wire
+		(pts
 			(xy 129.54 106.68) (xy 196.85 106.68)
 		)
 		(stroke
@@ -2882,6 +3084,16 @@
 			(type default)
 		)
 		(uuid "c30b1c30-4292-4f2e-a15a-213de4349c35")
+	)
+	(wire
+		(pts
+			(xy 143.51 124.46) (xy 143.51 142.24)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c33cbab5-ca95-43be-8597-ccaa16df88df")
 	)
 	(wire
 		(pts
@@ -3052,6 +3264,16 @@
 			(type default)
 		)
 		(uuid "d8d1e4f0-c94b-4cf2-a6ce-a54a13feb7dd")
+	)
+	(wire
+		(pts
+			(xy 161.29 124.46) (xy 143.51 124.46)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d97fa2b0-9209-48fc-bd60-99958bcd4860")
 	)
 	(wire
 		(pts
@@ -3282,6 +3504,16 @@
 			(type default)
 		)
 		(uuid "f9f418cf-5a90-44d4-9758-dedc086ba779")
+	)
+	(wire
+		(pts
+			(xy 138.43 121.92) (xy 161.29 121.92)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "fb1b7924-7e60-4d75-9088-fec80e114d08")
 	)
 	(wire
 		(pts
@@ -3874,7 +4106,7 @@
 				)
 			)
 		)
-		(property "Value" "100nF"
+		(property "Value" "1uF"
 			(at 135.128 133.604 90)
 			(effects
 				(font
@@ -5940,6 +6172,73 @@
 			(project "4-Kanal_Power_Meter"
 				(path "/d266b24d-6195-43e8-a1eb-5e1c07e0d0f6"
 					(reference "H1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:Conn_01x02_Pin")
+		(at 166.37 124.46 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "bec9a96b-cc96-4ee5-92c8-c89a390fdc40")
+		(property "Reference" "J11"
+			(at 165.735 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Conn_01x02_Pin"
+			(at 165.735 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Horizontal"
+			(at 166.37 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 166.37 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x02, script generated"
+			(at 166.37 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7710a986-81a2-4fae-8c9e-9ff7c36892de")
+		)
+		(pin "2"
+			(uuid "1026f39c-4a8b-4c72-8d60-f1e0d086feae")
+		)
+		(instances
+			(project "4-Kanal_Power_Meter"
+				(path "/d266b24d-6195-43e8-a1eb-5e1c07e0d0f6"
+					(reference "J11")
 					(unit 1)
 				)
 			)
