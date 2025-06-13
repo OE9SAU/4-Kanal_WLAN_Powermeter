@@ -9,3 +9,6 @@ Technical Specifications:
 * Microcontroller: Wemos D1 (ESP8266) for WiFi connectivity and data transmission
 * Communication: Wireless data streaming via WiFi for remote monitoring
 * Applications: Multi-channel power consumption monitoring, load analysis, and energy management
+
+
+![PCB](4-Kanal_WLAN_Powermeter/4-Kanal_Power_Meter.png)
