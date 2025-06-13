@@ -4,7 +4,7 @@ This project utilizes the Wemos D1 (ESP8266) microcontroller paired with INA226 
 
 Technical Specifications:
 * Voltage Measurement Range: up to 36 V DC per channel
-* Current Measurement Range: up to 20 A per channel (when PCB traces are properly soldered for high current)
+* Current Measurement Range: up to 13A per channel (when PCB traces are properly soldered (~0,3 mm) around 20A
 * Sensor: INA226 (bidirectional current and voltage sensor with high accuracy)
 * Microcontroller: Wemos D1 (ESP8266) for WiFi connectivity and data transmission
 * Communication: Wireless data streaming via WiFi for remote monitoring
