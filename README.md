@@ -11,4 +11,5 @@ Technical Specifications:
 * Applications: Multi-channel power consumption monitoring, load analysis, and energy management
 
 
-![PCB](4-Kanal_WLAN_Powermeter/4-Kanal_Power_Meter.png)
+![PCB](4-Kanal_Power_Meter.png)
+![PCB](4-Kanal_Power_Meter_back.png)
