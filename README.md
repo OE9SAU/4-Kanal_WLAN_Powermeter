@@ -25,3 +25,5 @@ Technical Specifications:
 | Calibration-Wert       | **4096**                                          |
 | Stromauflösung         | 0.625 mA / Bit                                    |
 | Leistungsauflösung     | $25 \cdot \text{LSB} = \boxed{15.625\,\text{mW}}$ |
+
+
