@@ -13,3 +13,17 @@ Technical Specifications:
 
 ![PCB](4-Kanal_Power_Meter.png)
 ![PCB](4-Kanal_Power_Meter_back.png)
+
+
+| Parameter              | Wert                                              |
+| ---------------------- | ------------------------------------------------- |
+| Shunt-Widerstand       | 2 mΩ                                              |
+| Maximalstrom           | 20 A                                              |
+| Shuntspannung @ 20 A   | 40 mV                                             |
+| Verlustleistung @ 20 A | 0.8 W                                             |
+| Current\_LSB           | 625 µA                                            |
+| Calibration-Wert       | **4096**                                          |
+| Stromauflösung         | 0.625 mA / Bit                                    |
+| Leistungsauflösung     | $25 \cdot \text{LSB} = \boxed{15.625\,\text{mW}}$ |
+
+
