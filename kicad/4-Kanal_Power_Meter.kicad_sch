@@ -5798,7 +5798,7 @@
 			(uuid "d1df88a3-dd54-4fe5-b1cf-51d19f9070e7")
 		)
 		(instances
-			(project ""
+			(project "4-Kanal_Power_Meter"
 				(path "/d266b24d-6195-43e8-a1eb-5e1c07e0d0f6"
 					(reference "#PWR019")
 					(unit 1)
