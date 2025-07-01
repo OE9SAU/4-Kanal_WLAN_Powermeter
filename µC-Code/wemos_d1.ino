@@ -1,43 +1,60 @@
-#include <Wire.h>
-#include <Adafruit_INA226.h>
+//     URL: https://github.com/RobTillaart/INA226
 
-Adafruit_INA226 ina = Adafruit_INA226();
+#include "INA226.h"
 
-void setup() {
+INA226 INA0(0x40);
+INA226 INA1(0x41);
+INA226 INA2(0x42);
+INA226 INA3(0x43);
+
+void setup()
+{
   Serial.begin(115200);
-  Wire.begin(D2, D1);  // SDA = D2, SCL = D1
+  Serial.println(__FILE__);
+  Serial.print("INA226_LIB_VERSION: ");
+  Serial.println(INA226_LIB_VERSION);
 
-  if (!ina.begin()) {
-    Serial.println("INA226 nicht gefunden. Check Verbindung!");
-    while (1);
-  }
+  Wire.begin();
 
-  // Kalibrierung für 2mΩ Shunt, max 20A
-  // Current_LSB = 0.000625 A (625 µA)
-  // Calibration = 4096 (aus Berechnung)
-  ina.setCalibration_32V_2A();  // default, aber wir überschreiben gleich
+  if (!INA0.begin()) Serial.println("INA0 (0x40) could not connect.");
+  if (!INA1.begin()) Serial.println("INA1 (0x41) could not connect.");
+  if (!INA2.begin()) Serial.println("INA2 (0x42) could not connect.");
+  if (!INA3.begin()) Serial.println("INA3 (0x43) could not connect.");
 
-  // Eigene Kalibrierung setzen:
-  // Leider setzt Adafruit keine direkte Kalibrierung, 
-  // aber man kann den Shunt-Widerstand einstellen (Ohm)
-  ina.setShuntResistor(0.002);  // 2 mΩ
-
-  // Wähle Current_LSB manuell über setCurrentLSB (kann man anpassen)
-  ina.setCurrentLSB(0.000625);  // 625 µA LSB
-
-  Serial.println("INA226 bereit für Messungen bis 20A.");
+  // Optional: Set max current and shunt values
+  INA0.setMaxCurrentShunt(2, 0.002);  // 2A, 2 mΩ
+  INA1.setMaxCurrentShunt(2, 0.002);
+  INA2.setMaxCurrentShunt(2, 0.002);
+  INA3.setMaxCurrentShunt(2, 0.002);
 }
 
-void loop() {
-  float current = ina.readCurrent();     // Strom in Ampere
-  float busVoltage = ina.readBusVoltage(); // Bus-Spannung in Volt
-  float power = ina.readPower();           // Leistung in Watt
-  float shuntVoltage = ina.readShuntVoltage(); // Shuntspannung in Volt
+void loop()
+{
+  Serial.println("\nBUS\tSHUNT\tCURRENT\tPOWER\t||\tBUS\tSHUNT\tCURRENT\tPOWER");
+  for (int i = 0; i < 20; i++)
+  {
+    printSensor(INA0);
+    Serial.print("\t||\t");
+    printSensor(INA1);
+    Serial.println();
 
-  Serial.print("Strom: "); Serial.print(current, 3); Serial.print(" A, ");
-  Serial.print("Bus-Spannung: "); Serial.print(busVoltage, 3); Serial.print(" V, ");
-  Serial.print("Shunt-Spannung: "); Serial.print(shuntVoltage * 1000, 2); Serial.print(" mV, ");
-  Serial.print("Leistung: "); Serial.print(power, 3); Serial.println(" W");
+    printSensor(INA2);
+    Serial.print("\t||\t");
+    printSensor(INA3);
+    Serial.println();
 
-  delay(1000);
+    Serial.println("------------------------------------------------------------");
+    delay(1000);
+  }
+}
+
+void printSensor(INA226& sensor)
+{
+  Serial.print(sensor.getBusVoltage(), 3);
+  Serial.print("\t");
+  Serial.print(sensor.getShuntVoltage_mV(), 3);
+  Serial.print("\t");
+  Serial.print(sensor.getCurrent_mA(), 3);
+  Serial.print("\t");
+  Serial.print(sensor.getPower_mW(), 3);
 }
