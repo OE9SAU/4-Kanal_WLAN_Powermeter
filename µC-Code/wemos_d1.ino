@@ -18,8 +18,8 @@ void setup()
 
   if (!INA0.begin()) Serial.println("INA0 (0x40) could not connect.");
   if (!INA1.begin()) Serial.println("INA1 (0x41) could not connect.");
-  if (!INA2.begin()) Serial.println("INA2 (0x42) could not connect.");
-  if (!INA3.begin()) Serial.println("INA3 (0x43) could not connect.");
+  if (!INA2.begin()) Serial.println("INA2 (0x44) could not connect.");
+  if (!INA3.begin()) Serial.println("INA3 (0x45) could not connect.");
 
   // Optional: Set max current and shunt values
   INA0.setMaxCurrentShunt(2, 0.002);  // 2A, 2 mΩ
