@@ -12,7 +12,8 @@ Technical Specifications:
 
 
 ![PCB](4-Kanal_Power_Meter.png)
-![PCB](4-Kanal_Power_Meter_back.png)
+![PCB](4-Kanal_Power_Meter_work1.png)
+![PCB](4-Kanal_Power_Meter_work2.png)
 
 
 | Parameter              | Wert                                              |
