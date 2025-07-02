@@ -527,6 +527,17 @@
 				(xyz 90 0 90)
 			)
 		)
+		(model "${KIPRJMOD}/Connector_Anderson.pretty/ASMPR45-1X2-RK.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 0 0)
+			)
+		)
 	)
 	(footprint "MountingHole:MountingHole_3.5mm_Pad"
 		(layer "F.Cu")
@@ -5532,6 +5543,17 @@
 				(xyz 90 0 90)
 			)
 		)
+		(model "${KIPRJMOD}/Connector_Anderson.pretty/ASMPR45-1X2-RK.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 0 0)
+			)
+		)
 	)
 	(footprint "Resistor_SMD:R_2512_6332Metric_Pad1.40x3.35mm_HandSolder"
 		(layer "F.Cu")
@@ -6862,26 +6884,15 @@
 			(zone_connect 2)
 			(uuid "b70cb2f4-c012-4053-b03b-c4af296dfd12")
 		)
-		(model "${KIPRJMOD}/Connector_Anderson.3dshapes/1336G1 IN HSG.STEP"
+		(model "${KIPRJMOD}/Connector_Anderson.pretty/ASMPR45-1X2-RK.step"
 			(offset
-				(xyz 1.9 -1.5 4.15)
+				(xyz 0 0 0)
 			)
 			(scale
 				(xyz 1 1 1)
 			)
 			(rotate
-				(xyz 90 0 90)
-			)
-		)
-		(model "${KIPRJMOD}/Connector_Anderson.3dshapes/1336G1 IN HSG.STEP"
-			(offset
-				(xyz 9.8 -1.5 4.15)
-			)
-			(scale
-				(xyz 1 1 1)
-			)
-			(rotate
-				(xyz 90 0 90)
+				(xyz -90 0 0)
 			)
 		)
 	)
@@ -7934,6 +7945,17 @@
 				(xyz 90 0 90)
 			)
 		)
+		(model "${KIPRJMOD}/Connector_Anderson.pretty/ASMPR45-1X2-RK.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 0 0)
+			)
+		)
 	)
 	(footprint "Package_SO:VSSOP-10_3x3mm_P0.5mm"
 		(layer "F.Cu")
@@ -8915,6 +8937,17 @@
 				(xyz 90 0 90)
 			)
 		)
+		(model "${KIPRJMOD}/Connector_Anderson.pretty/ASMPR45-1X2-RK.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 0 0)
+			)
+		)
 	)
 	(footprint "LOGO"
 		(layer "B.Cu")
@@ -9740,6 +9773,17 @@
 				(xyz 90 0 90)
 			)
 		)
+		(model "${KIPRJMOD}/Connector_Anderson.pretty/ASMPR45-1X2-RK.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 0 0)
+			)
+		)
 	)
 	(footprint "Connector_Anderson:PowerPole_PP45_1336G1_1x2_Horizontal"
 		(layer "B.Cu")
@@ -10171,6 +10215,17 @@
 				(xyz 90 0 90)
 			)
 		)
+		(model "${KIPRJMOD}/Connector_Anderson.pretty/ASMPR45-1X2-RK.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 0 0)
+			)
+		)
 	)
 	(footprint "Connector_Anderson:PowerPole_PP45_1336G1_1x2_Horizontal"
 		(layer "B.Cu")
@@ -10600,6 +10655,17 @@
 			)
 			(rotate
 				(xyz 90 0 90)
+			)
+		)
+		(model "${KIPRJMOD}/Connector_Anderson.pretty/ASMPR45-1X2-RK.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 0 0)
 			)
 		)
 	)
