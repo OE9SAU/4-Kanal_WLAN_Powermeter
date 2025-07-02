@@ -1,4 +1,6 @@
-//     URL: https://github.com/RobTillaart/INA226
+// INA226 Libary
+// https://github.com/RobTillaart/INA226
+//
 
 #include "INA226.h"
 
