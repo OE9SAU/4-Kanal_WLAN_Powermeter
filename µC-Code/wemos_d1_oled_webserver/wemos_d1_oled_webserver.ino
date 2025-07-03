@@ -1,6 +1,6 @@
 #include <Wire.h>
 #include <SH1106Wire.h>   	  // Von ESP8266-OLED Bibliothek https://github.com/ThingPulse/esp8266-oled-ssd1306
-#include "INA226.h"			  // https://github.com/RobTillaart/INA226
+#include <INA226.h>	          // https://github.com/RobTillaart/INA226
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>

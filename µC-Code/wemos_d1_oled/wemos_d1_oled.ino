@@ -1,6 +1,6 @@
 #include <Wire.h>
 #include <SH1106Wire.h>       // Von ESP8266-OLED Bibliothek https://github.com/ThingPulse/esp8266-oled-ssd1306
-#include "INA226.h"			  // https://github.com/RobTillaart/INA226
+#include <INA226.h>       	  // https://github.com/RobTillaart/INA226
 
 // Display: SH1106 128x64, I2C, Adresse 0x3C
 SH1106Wire display(0x3C, D2, D1);  // SDA = D2, SCL = D1
