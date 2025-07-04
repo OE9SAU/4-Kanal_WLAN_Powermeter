@@ -1,7 +1,5 @@
 **4-Channel WiFi Power Meter Using Wemos D1 and INA226 (or Compatible INAxxx Sensors)**
 
-v1.1: work in progress
-
 This project utilizes the Wemos D1 (ESP8266) microcontroller paired with INA226 current/voltage sensors (or any compatible INAxxx series) to provide precise, real-time measurements of electrical parameters across four independent channels.
 
 Technical Specifications:

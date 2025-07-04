@@ -27,22 +27,51 @@ float c00, v0, c11, v1, c22, v2, c33, v3;
 bool wlanOk = false;
 
 void handleRoot() {
+  int rssi = WiFi.RSSI();
+  int level = 0;
+  if (rssi > -50) level = 4;
+  else if (rssi > -60) level = 3;
+  else if (rssi > -70) level = 2;
+  else if (rssi > -80) level = 1;
+  else level = 0;
+
   String html = "<!DOCTYPE html><html><head><title>OE9XVI - PsMon</title>"
                 "<meta http-equiv=\"refresh\" content=\"5\">"
-                "<style>body {background-color: black; color: white; font-family: monospace;}"
+                "<style>"
+                "body {background-color: black; color: white; font-family: monospace; margin: 0; padding: 20px;}"
                 "h1 {text-align:center; font-size: 36px; margin-bottom: 5px;}"
                 ".release {text-align:center; font-size: 16px; margin-bottom: 20px; color: gray;}"
                 "pre {font-size: 24px; line-height: 1.5;}"
                 "footer {font-size: 14px; color: gray; text-align:center; margin-top: 20px;}"
+                ".wifi-icon { position:absolute; top:10px; right:10px; width:20px; height:15px; display:flex; align-items:flex-end; gap:1px; }"
+                ".wifi-icon .bar { width:3px; background:#444; }"
+                ".wifi-icon .bar.active { background:#0f0; }"
+                ".bar1 { height:4px; }"
+                ".bar2 { height:7px; }"
+                ".bar3 { height:10px; }"
+                ".bar4 { height:13px; }"
                 "</style></head><body>"
                 "<h1>OE9XVI Powersupply Monitor</h1>"
-                "<div class='release'>" + String(Release) + "</div><pre>";
+                "<div class='release'>" + String(Release) + "</div>";
 
+  // WLAN-Signalstärke-Icon
+  html += "<div class='wifi-icon'>"
+          "<div class='bar bar1" + String(level >= 1 ? " active" : "") + "'></div>"
+          "<div class='bar bar2" + String(level >= 2 ? " active" : "") + "'></div>"
+          "<div class='bar bar3" + String(level >= 3 ? " active" : "") + "'></div>"
+          "<div class='bar bar4" + String(level >= 4 ? " active" : "") + "'></div>"
+          "</div>";
+
+  // Sensorwerte
+  html += "<pre>";
   html += "Sensor 0: " + String(c00, 2) + " A   " + String(v0, 2) + " V\n";
   html += "Sensor 1: " + String(c11, 2) + " A   " + String(v1, 2) + " V\n";
   html += "Sensor 2: " + String(c22, 2) + " A   " + String(v2, 2) + " V\n";
   html += "Sensor 3: " + String(c33, 2) + " A   " + String(v3, 2) + " V\n";
-  html += "</pre><footer>";
+  html += "</pre>";
+
+  // Netzwerkdaten
+  html += "<footer>";
   html += "IP: " + WiFi.localIP().toString();
   html += " | MAC: " + WiFi.macAddress();
   html += " | Gateway: " + WiFi.gatewayIP().toString();
@@ -52,6 +81,7 @@ void handleRoot() {
 
   server.send(200, "text/html", html);
 }
+
 
 // Signalstärke anzeigen (WLAN Balken rechts oben)
 void drawWifiSignal(int strength) {
