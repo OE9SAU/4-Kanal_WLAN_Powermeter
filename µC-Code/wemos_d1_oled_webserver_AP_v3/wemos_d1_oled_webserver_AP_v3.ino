@@ -7,7 +7,7 @@
 #include <ArduinoOTA.h>
 #include <WiFiManager.h>  		// https://github.com/tzapu/WiFiManager
 
-const char* Release = "V3.0 by OE9SAU";
+const char* Release = "V3.1 by OE9SAU";
 
 // OLED Display
 SH1106Wire display(0x3C, D2, D1);  // SDA = D2, SCL = D1
@@ -37,8 +37,9 @@ void handleRoot() {
 
   String html = "<!DOCTYPE html><html lang='de'><head><meta charset='UTF-8'>"
                 "<meta name='viewport' content='width=device-width, initial-scale=1'>"
-                "<title>OE9XVI - PsMon</title>"
+                "<title>OE9XVI PSU-Monitor</title>"
                 "<meta http-equiv='refresh' content='5'>"
+                "<link rel='icon' href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔋</text></svg>'>"
                 "<style>"
                 "body {background-color: #121212; color: #e0e0e0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px;}"
                 "h1 {text-align: center; font-size: 2.5em; margin-bottom: 0.2em;}"
@@ -87,10 +88,10 @@ void handleRoot() {
   // Sensorwerte als Tabelle
   html += "<table>"
           "<thead><tr><th>Sensor</th><th>Strom (A)</th><th>Spannung (V)</th></tr></thead><tbody>"
-          "<tr><td>0</td><td>" + String(c00, 2) + "</td><td>" + String(v0, 2) + "</td></tr>"
-          "<tr><td>1</td><td>" + String(c11, 2) + "</td><td>" + String(v1, 2) + "</td></tr>"
-          "<tr><td>2</td><td>" + String(c22, 2) + "</td><td>" + String(v2, 2) + "</td></tr>"
-          "<tr><td>3</td><td>" + String(c33, 2) + "</td><td>" + String(v3, 2) + "</td></tr>"
+		      "<tr><td>BAT &#128267;</td><td>" + String(c00, 2) + "</td><td>" + String(v0, 2) + "</td></tr>"
+		      "<tr><td>NT1 &#128268;</td><td>" + String(c11, 2) + "</td><td>" + String(v1, 2) + "</td></tr>"
+		      "<tr><td>NT2 &#128268;</td><td>" + String(c22, 2) + "</td><td>" + String(v2, 2) + "</td></tr>"
+		      "<tr><td>RES &#9881;&#65039;</td><td>" + String(c33, 2) + "</td><td>" + String(v3, 2) + "</td></tr>"
           "</tbody></table>";
 
   // Netzwerkdaten
@@ -138,7 +139,7 @@ void setup() {
   display.setFont(ArialMT_Plain_10);
   display.setTextAlignment(TEXT_ALIGN_LEFT);
   display.clear();
-  display.drawString(0, 0, "OE9XVI - PsMon");
+  display.drawString(0, 0, "OE9XVI PSU-Monitor");
   display.drawString(0, 12, Release);
   display.display();
   delay(1500);
@@ -159,7 +160,7 @@ void setup() {
   display.drawString(0, 36, "Starte WiFi-Setup...");
   display.display();
 
-  if (!wifiManager.autoConnect("OE9XVI-PsMon-AP")) {
+  if (!wifiManager.autoConnect("OE9XVI-PSU-Monitor-AP")) {
     Serial.println("WLAN-Verbindung fehlgeschlagen. Neustart...");
     display.drawString(0, 48, "WLAN fehlgeschlagen");
     display.display();
@@ -211,11 +212,11 @@ void loop() {
   // OLED aktualisieren
   display.clear();
   drawWifiSignal(WiFi.RSSI());  // Signalstärke-Symbol oben rechts
-  display.drawString(0, 0, "OE9XVI - PsMon");
-  display.drawString(0, 12, "0: " + String(c00, 2) + "A " + String(v0, 2) + "V");
-  display.drawString(0, 24, "1: " + String(c11, 2) + "A " + String(v1, 2) + "V");
-  display.drawString(0, 36, "2: " + String(c22, 2) + "A " + String(v2, 2) + "V");
-  display.drawString(0, 48, "3: " + String(c33, 2) + "A " + String(v3, 2) + "V");
+  display.drawString(0, 0, "OE9XVI PSU-Monitor");
+  display.drawString(0, 12, "BAT: " + String(c00, 2) + "A " + String(v0, 2) + "V");
+  display.drawString(0, 24, "NT1: " + String(c11, 2) + "A " + String(v1, 2) + "V");
+  display.drawString(0, 36, "NT2: " + String(c22, 2) + "A " + String(v2, 2) + "V");
+  display.drawString(0, 48, "RES: " + String(c33, 2) + "A " + String(v3, 2) + "V");
   display.display();
 
   delay(1000);
