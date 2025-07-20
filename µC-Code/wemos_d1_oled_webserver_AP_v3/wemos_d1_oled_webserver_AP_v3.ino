@@ -19,7 +19,7 @@ INA226 INA2(0x44);
 INA226 INA3(0x45);
 
 // Webserver
-ESP8266WebServer server(80);
+ESP8266WebServer server(2210);
 
 // Sensorwerte
 float c00, v0, c11, v1, c22, v2, c33, v3;
