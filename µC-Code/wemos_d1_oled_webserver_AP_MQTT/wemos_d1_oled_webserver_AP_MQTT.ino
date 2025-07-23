@@ -35,8 +35,10 @@
 // https://github.com/knolleary/pubsubclient
 #include <PubSubClient.h>
 
+#include <ArduinoJson.h>
+
 // ========== Versionsinfo ==========
-const char* Release = "V3.1 MQTT by OE9SAU";
+const char* Release = "V4.0 by OE9SAU";
 
 // ========== OLED Display ==========
 SH1106Wire display(0x3C, D2, D1);  // SDA = D2, SCL = D1
@@ -68,7 +70,11 @@ struct MqttConfig {
 
 bool mqttConnected = false;
 
-// ========== Web Root ==========
+// Timer für MQTT Publish
+unsigned long lastPublish = 0;
+
+// ========== Funktionen ==========
+
 void handleRoot() {
   int rssi = WiFi.RSSI();
   int level = 0;
@@ -76,23 +82,80 @@ void handleRoot() {
   else if (rssi > -60) level = 3;
   else if (rssi > -70) level = 2;
   else if (rssi > -80) level = 1;
+  else level = 0;
 
   String html = "<!DOCTYPE html><html lang='de'><head><meta charset='UTF-8'>"
                 "<meta name='viewport' content='width=device-width, initial-scale=1'>"
-                "<title>OE9XVI PSU-Monitor</title><meta http-equiv='refresh' content='5'>"
-                "<style>body{background:#121212;color:#e0e0e0;font-family:sans-serif;padding:20px;}h1{text-align:center;}table{margin:0 auto;border-collapse:collapse;}td,th{padding:10px;border-bottom:1px solid #333;}footer{text-align:center;margin-top:20px;color:#888;}</style></head><body>"
-                "<h1>OE9XVI PSU Monitor</h1>"
-                "<table><tr><th>Sensor</th><th>Strom (A)</th><th>Spannung (V)</th></tr>"
-                "<tr><td>BAT</td><td>" + String(c00, 2) + "</td><td>" + String(v0, 2) + "</td></tr>"
-                "<tr><td>NT1</td><td>" + String(c11, 2) + "</td><td>" + String(v1, 2) + "</td></tr>"
-                "<tr><td>NT2</td><td>" + String(c22, 2) + "</td><td>" + String(v2, 2) + "</td></tr>"
-                "<tr><td>NT3</td><td>" + String(c33, 2) + "</td><td>" + String(v3, 2) + "</td></tr></table>"
-                "<footer>IP: " + WiFi.localIP().toString() + " | MQTT: " + (mqttConnected ? "✅" : "❌") + "</footer>"
-                "</body></html>";
+                "<title>OE9XVI PSU-Monitor</title>"
+                "<meta http-equiv='refresh' content='5'>"
+                "<link rel='icon' href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔋</text></svg>'>"
+                "<style>"
+                "body {background-color: #121212; color: #e0e0e0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px;}"
+                "h1 {text-align: center; font-size: 2.5em; margin-bottom: 0.2em;}"
+                ".release {text-align: center; font-size: 1em; margin-bottom: 1.5em; color: #888;}"
+                "table {width: 100%; max-width: 400px; margin: 0 auto; border-collapse: collapse;}"
+                "th, td {padding: 12px 15px; text-align: center; border-bottom: 1px solid #333;}"
+                "th {background-color: #222;}"
+                "td {font-size: 1.2em;}"
+                "footer {font-size: 0.9em; color: #666; text-align: center; margin-top: 2em;}"
+                ".wifi-icon {"
+                "  position: fixed;"
+                "  top: 80px;"
+                "  right: 40px;"
+                "  display: flex;"
+                "  align-items: flex-end;"
+                "  gap: 4px;"
+                "  padding: 6px;"
+                "  background-color: rgba(0,0,0,0.4);"
+                "  border-radius: 6px;"
+                "  border: 1px solid currentColor;"
+                "  z-index: 10;"
+                "}"
+                ".wifi-icon .bar {width: 5px; background: #444; border-radius: 2px; transition: background-color 0.3s ease;}"
+                ".wifi-icon .bar.active {background: #4caf50;}"
+                ".bar1 {height: 6px;}"
+                ".bar2 {height: 10px;}"
+                ".bar3 {height: 14px;}"
+                ".bar4 {height: 18px;}"
+                "@media (max-width: 480px) {"
+                "  body {padding: 10px;}"
+                "  h1 {font-size: 1.8em;}"
+                "  td {font-size: 1em;}"
+                "}"
+                "</style></head><body>"
+                "<h1>OE9XVI Powersupply Monitor</h1>"
+                "<div class='release'>" + String(Release) + "</div>";
+
+  // WLAN-Signalstärke-Icon
+  html += "<div class='wifi-icon'>"
+          "<div class='bar bar1" + String(level >= 1 ? " active" : "") + "'></div>"
+          "<div class='bar bar2" + String(level >= 2 ? " active" : "") + "'></div>"
+          "<div class='bar bar3" + String(level >= 3 ? " active" : "") + "'></div>"
+          "<div class='bar bar4" + String(level >= 4 ? " active" : "") + "'></div>"
+          "</div>";
+
+  // Sensorwerte als Tabelle
+  html += "<table>"
+          "<thead><tr><th>Sensor</th><th>Strom (A)</th><th>Spannung (V)</th></tr></thead><tbody>"
+          "<tr><td>BAT &#128267;</td><td>" + String(c00, 2) + "</td><td>" + String(v0, 2) + "</td></tr>"
+          "<tr><td>NT1 &#128268;</td><td>" + String(c11, 2) + "</td><td>" + String(v1, 2) + "</td></tr>"
+          "<tr><td>NT2 &#128268;</td><td>" + String(c22, 2) + "</td><td>" + String(v2, 2) + "</td></tr>"
+          "<tr><td>NT3 &#128268;</td><td>" + String(c33, 2) + "</td><td>" + String(v3, 2) + "</td></tr>"
+          "</tbody></table>";
+
+  // Netzwerkdaten
+  html += "<footer>"
+          "IP: " + WiFi.localIP().toString() +
+          " | MAC: " + WiFi.macAddress() +
+          " | Gateway: " + WiFi.gatewayIP().toString() +
+          " | Subnet: " + WiFi.subnetMask().toString() +
+          " | DNS: " + WiFi.dnsIP().toString() +
+          " | MQTT: " + (mqttConnected ? "✅" : "❌") +
+          "</footer></body></html>";
+
   server.send(200, "text/html", html);
 }
 
-// ========== WLAN-Balken ==========
 void drawWifiSignal(int strength) {
   int x = 110, y = 0, barWidth = 3, gap = 2, level = 0;
   if (strength > -50) level = 4;
@@ -109,13 +172,12 @@ void drawWifiSignal(int strength) {
   }
 }
 
-// ========== MQTT-Verbindung ==========
 void setupMQTT() {
   mqttClient.setServer(mqttConfig.broker, mqttConfig.port);
   if (strlen(mqttConfig.broker) > 0) {
     if (mqttClient.connect("PSUClient", mqttConfig.username, mqttConfig.password)) {
       mqttConnected = true;
-      mqttClient.publish(mqttConfig.topic, "MQTT verbunden");
+      //mqttClient.publish(mqttConfig.topic, "MQTT verbunden");
       Serial.println("MQTT verbunden");
     } else {
       Serial.println("MQTT-Verbindung fehlgeschlagen");
@@ -194,56 +256,72 @@ void setup() {
     strncpy(mqttConfig.topic, server.arg("topic").c_str(), sizeof(mqttConfig.topic));
     EEPROM.put(0, mqttConfig);
     EEPROM.commit();
-    server.send(200, "text/html", "Gespeichert. Neustart in 3s...");
-    delay(3000);
+    server.send(200, "text/html", "<h1>Einstellungen gespeichert. Neustart...</h1>");
+    delay(2000);
     ESP.restart();
   });
 
   server.begin();
-  Serial.println("HTTP Server gestartet");
 
   setupMQTT();
+
+  lastPublish = 0;  // Timer zurücksetzen
 }
 
-// ========== Hauptloop ==========
-void loop() {
-  if (wlanOk) {
-    ArduinoOTA.handle();
-    server.handleClient();
-  }
+void publishAllPsuValues() {
+  mqttClient.publish("OE9XVI-PSU/BAT/Strom", (String(c00, 2) + " A").c_str(), true);
+  mqttClient.publish("OE9XVI-PSU/BAT/Spannung", (String(v0, 2) + " V").c_str(), true);
 
-  mqttClient.loop();
+  mqttClient.publish("OE9XVI-PSU/NT1/Strom", (String(c11, 2) + " A").c_str(), true);
+  mqttClient.publish("OE9XVI-PSU/NT1/Spannung", (String(v1, 2) + " V").c_str(), true);
+
+  mqttClient.publish("OE9XVI-PSU/NT2/Strom", (String(c22, 2) + " A").c_str(), true);
+  mqttClient.publish("OE9XVI-PSU/NT2/Spannung", (String(v2, 2) + " V").c_str(), true);
+
+  mqttClient.publish("OE9XVI-PSU/NT3/Strom", (String(c33, 2) + " A").c_str(), true);
+  mqttClient.publish("OE9XVI-PSU/NT3/Spannung", (String(v3, 2) + " V").c_str(), true);
+}
+
+// ========== Loop ==========
+void loop() {
+  ArduinoOTA.handle();
+  server.handleClient();
 
   // Sensorwerte lesen
-  c00 = INA0.getCurrent_mA() / 1000.0;
+  c00 = INA0.getCurrent();
   v0 = INA0.getBusVoltage();
-  c11 = INA1.getCurrent_mA() / 1000.0;
+  c11 = INA1.getCurrent();
   v1 = INA1.getBusVoltage();
-  c22 = INA2.getCurrent_mA() / 1000.0;
+  c22 = INA2.getCurrent();
   v2 = INA2.getBusVoltage();
-  c33 = INA3.getCurrent_mA() / 1000.0;
+  c33 = INA3.getCurrent();
   v3 = INA3.getBusVoltage();
 
-  // OLED anzeigen
+  // OLED-Anzeige
   display.clear();
-  drawWifiSignal(WiFi.RSSI());
+  display.setFont(ArialMT_Plain_10);
   display.drawString(0, 0, "OE9XVI PSU-Monitor");
-  display.drawString(0, 12, "BAT: " + String(c00, 2) + "A " + String(v0, 2) + "V");
-  display.drawString(0, 24, "NT1: " + String(c11, 2) + "A " + String(v1, 2) + "V");
-  display.drawString(0, 36, "NT2: " + String(c22, 2) + "A " + String(v2, 2) + "V");
-  display.drawString(0, 48, "NT3: " + String(c33, 2) + "A " + String(v3, 2) + "V");
+  display.drawString(0, 12, Release);
+
+  drawWifiSignal(WiFi.RSSI());
+
+  display.drawString(0, 30, "BAT: " + String(c00, 2) + "A " + String(v0, 2) + "V");
+  display.drawString(0, 44, "NT1: " + String(c11, 2) + "A " + String(v1, 2) + "V");
+  display.drawString(0, 58, "NT2: " + String(c22, 2) + "A " + String(v2, 2) + "V");
+  display.drawString(0, 72, "NT3: " + String(c33, 2) + "A " + String(v3, 2) + "V");
+
   display.display();
 
-  // MQTT Publish
-  if (mqttConnected) {
-    String payload = "{";
-    payload += "\"bat\":{\"c\":" + String(c00, 2) + ",\"v\":" + String(v0, 2) + "},";
-    payload += "\"nt1\":{\"c\":" + String(c11, 2) + ",\"v\":" + String(v1, 2) + "},";
-    payload += "\"nt2\":{\"c\":" + String(c22, 2) + ",\"v\":" + String(v2, 2) + "},";
-    payload += "\"nt3\":{\"c\":" + String(c33, 2) + ",\"v\":" + String(v3, 2) + "}";
-    payload += "}";
-    mqttClient.publish(mqttConfig.topic, payload.c_str());
-  }
 
-  delay(1000);
+// MQTT alle 5 Sekunden senden
+unsigned long now = millis();
+if (now - lastPublish > 5000) {
+  if (!mqttClient.connected()) {
+    setupMQTT();
+  }
+  if (mqttClient.connected()) {
+    publishAllPsuValues();
+  }
+  lastPublish = now;
+}
 }
