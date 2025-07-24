@@ -61,11 +61,11 @@ WiFiClient espClient;
 PubSubClient mqttClient(espClient);
 
 struct MqttConfig {
-  char broker[40] = "";
+  char broker[40] = "94.199.174.169";
   int port = 1883;
-  char username[32] = "";
-  char password[32] = "";
-  char topic[64] = "psu/oe9xvi";
+  char username[32] = "homeassistant";
+  char password[32] = "homeOfOE9";
+  char topic[64] = "homeassistant";
 } mqttConfig;
 
 bool mqttConnected = false;
@@ -174,13 +174,29 @@ void drawWifiSignal(int strength) {
 
 void setupMQTT() {
   mqttClient.setServer(mqttConfig.broker, mqttConfig.port);
-  if (strlen(mqttConfig.broker) > 0) {
-    if (mqttClient.connect("PSUClient", mqttConfig.username, mqttConfig.password)) {
-      mqttConnected = true;
-      //mqttClient.publish(mqttConfig.topic, "MQTT verbunden");
-      Serial.println("MQTT verbunden");
-    } else {
-      Serial.println("MQTT-Verbindung fehlgeschlagen");
+
+  if (strlen(mqttConfig.broker) == 0) {
+    Serial.println("MQTT Broker nicht gesetzt.");
+    mqttConnected = false;
+    return;
+  }
+
+  Serial.printf("Versuche MQTT zu verbinden: %s:%d\n", mqttConfig.broker, mqttConfig.port);
+  
+  if (mqttClient.connect("PSUClient", mqttConfig.username, mqttConfig.password)) {
+    mqttConnected = true;
+    Serial.println("MQTT verbunden");
+  } else {
+    mqttConnected = false;
+    int state = mqttClient.state();
+    Serial.printf("MQTT-Verbindung fehlgeschlagen. Fehlercode: %d\n", state);
+    switch(state) {
+      case -4: Serial.println("Fehler: Verbindung abgelehnt"); break;
+      case -3: Serial.println("Fehler: Netzwerk nicht verbunden"); break;
+      case -2: Serial.println("Fehler: Verbindungszeitüberschreitung"); break;
+      case -1: Serial.println("Fehler: Fehler beim Verbindungsaufbau"); break;
+      case 0:  Serial.println("OK"); break;
+      default: Serial.println("Unbekannter Fehler"); break;
     }
   }
 }
@@ -269,19 +285,20 @@ void setup() {
 }
 
 void publishAllPsuValues() {
-  mqttClient.publish("OE9XVI-PSU/BAT/Strom", (String(c00, 2) + " A").c_str(), true);
-  mqttClient.publish("OE9XVI-PSU/BAT/Spannung", (String(v0, 2) + " V").c_str(), true);
+  String baseTopic = String(mqttConfig.topic);  // Basis-Topic aus den Einstellungen
 
-  mqttClient.publish("OE9XVI-PSU/NT1/Strom", (String(c11, 2) + " A").c_str(), true);
-  mqttClient.publish("OE9XVI-PSU/NT1/Spannung", (String(v1, 2) + " V").c_str(), true);
+  mqttClient.publish((baseTopic + "/PSU_OE9XVI/BAT/Strom").c_str(), (String(c00, 2) + " A").c_str(), true);
+  mqttClient.publish((baseTopic + "/PSU_OE9XVI/BAT/Spannung").c_str(), (String(v0, 2) + " V").c_str(), true);
 
-  mqttClient.publish("OE9XVI-PSU/NT2/Strom", (String(c22, 2) + " A").c_str(), true);
-  mqttClient.publish("OE9XVI-PSU/NT2/Spannung", (String(v2, 2) + " V").c_str(), true);
+  mqttClient.publish((baseTopic + "/PSU_OE9XVI/NT1/Strom").c_str(), (String(c11, 2) + " A").c_str(), true);
+  mqttClient.publish((baseTopic + "/PSU_OE9XVI/NT1/Spannung").c_str(), (String(v1, 2) + " V").c_str(), true);
 
-  mqttClient.publish("OE9XVI-PSU/NT3/Strom", (String(c33, 2) + " A").c_str(), true);
-  mqttClient.publish("OE9XVI-PSU/NT3/Spannung", (String(v3, 2) + " V").c_str(), true);
+  mqttClient.publish((baseTopic + "/PSU_OE9XVI/NT2/Strom").c_str(), (String(c22, 2) + " A").c_str(), true);
+  mqttClient.publish((baseTopic + "/PSU_OE9XVI/NT2/Spannung").c_str(), (String(v2, 2) + " V").c_str(), true);
+
+  mqttClient.publish((baseTopic + "/PSU_OE9XVI/NT3/Strom").c_str(), (String(c33, 2) + " A").c_str(), true);
+  mqttClient.publish((baseTopic + "/PSU_OE9XVI/NT3/Spannung").c_str(), (String(v3, 2) + " V").c_str(), true);
 }
-
 // ========== Loop ==========
 void loop() {
   ArduinoOTA.handle();

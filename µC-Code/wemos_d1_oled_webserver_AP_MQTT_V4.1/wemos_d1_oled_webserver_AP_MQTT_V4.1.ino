@@ -65,13 +65,15 @@ struct MqttConfig {
   int port = 1883;
   char username[32] = "";
   char password[32] = "";
-  char topic[64] = "psu/oe9xvi";
+  char topic[64] = "";
 } mqttConfig;
 
 bool mqttConnected = false;
 
 // Timer für MQTT Publish
 unsigned long lastPublish = 0;
+unsigned long lastSystemPublish = 0;
+const unsigned long systemPublishInterval = 30000; // alle 30 Sekunden
 
 // ========== Funktionen ==========
 
@@ -174,13 +176,29 @@ void drawWifiSignal(int strength) {
 
 void setupMQTT() {
   mqttClient.setServer(mqttConfig.broker, mqttConfig.port);
-  if (strlen(mqttConfig.broker) > 0) {
-    if (mqttClient.connect("PSUClient", mqttConfig.username, mqttConfig.password)) {
-      mqttConnected = true;
-      //mqttClient.publish(mqttConfig.topic, "MQTT verbunden");
-      Serial.println("MQTT verbunden");
-    } else {
-      Serial.println("MQTT-Verbindung fehlgeschlagen");
+
+  if (strlen(mqttConfig.broker) == 0) {
+    Serial.println("MQTT Broker nicht gesetzt.");
+    mqttConnected = false;
+    return;
+  }
+
+  Serial.printf("Versuche MQTT zu verbinden: %s:%d\n", mqttConfig.broker, mqttConfig.port);
+  
+  if (mqttClient.connect("PSUClient", mqttConfig.username, mqttConfig.password)) {
+    mqttConnected = true;
+    Serial.println("MQTT verbunden");
+  } else {
+    mqttConnected = false;
+    int state = mqttClient.state();
+    Serial.printf("MQTT-Verbindung fehlgeschlagen. Fehlercode: %d\n", state);
+    switch(state) {
+      case -4: Serial.println("Fehler: Verbindung abgelehnt"); break;
+      case -3: Serial.println("Fehler: Netzwerk nicht verbunden"); break;
+      case -2: Serial.println("Fehler: Verbindungszeitüberschreitung"); break;
+      case -1: Serial.println("Fehler: Fehler beim Verbindungsaufbau"); break;
+      case 0:  Serial.println("OK"); break;
+      default: Serial.println("Unbekannter Fehler"); break;
     }
   }
 }
@@ -214,34 +232,23 @@ void setup() {
   WiFiManager wifiManager;
   display.drawString(0, 36, "Starte WiFi-Setup...");
   display.display();
-if (!wifiManager.autoConnect("OE9XVI-PSU-Monitor-AP")) {
-  Serial.println("WLAN fehlgeschlagen. Neustart...");
-  display.drawString(0, 48, "WLAN fehlgeschlagen");
-  display.display();
-  delay(3000);
-  ESP.restart();
-}
+  if (!wifiManager.autoConnect("OE9XVI-PSU-Monitor-AP")) {
+    Serial.println("WLAN fehlgeschlagen. Neustart...");
+    display.drawString(0, 48, "WLAN fehlgeschlagen");
+    display.display();
+    delay(3000);
+    ESP.restart();
+  }
 
-wlanOk = true;
-Serial.println("WLAN verbunden: " + WiFi.localIP().toString());
-
-// 🔽 NEU: Hostname setzen
-WiFi.hostname("PSU-Monitor");
-
-// 🔽 NEU: mDNS starten
-  if (MDNS.begin("PSU-Monitor")) {
-    Serial.println("mDNS gestartet: PSU-Monitor.local");
-  } else {
-   Serial.println("mDNS-Start fehlgeschlagen");
-}
-
+  wlanOk = true;
+  Serial.println("WLAN verbunden: " + WiFi.localIP().toString());
   display.clear();
   display.drawString(0, 0, "WLAN verbunden");
   display.drawString(0, 12, WiFi.SSID());
   display.drawString(0, 24, WiFi.localIP().toString());
   display.display();
   delay(3000);
- 
+
   ArduinoOTA.begin();
 
   server.on("/", handleRoot);
@@ -280,17 +287,28 @@ WiFi.hostname("PSU-Monitor");
 }
 
 void publishAllPsuValues() {
-  mqttClient.publish("OE9XVI-PSU/BAT/Strom", (String(c00, 2) + " A").c_str(), true);
-  mqttClient.publish("OE9XVI-PSU/BAT/Spannung", (String(v0, 2) + " V").c_str(), true);
+  String baseTopic = String(mqttConfig.topic);  // Basis-Topic aus den Einstellungen
 
-  mqttClient.publish("OE9XVI-PSU/NT1/Strom", (String(c11, 2) + " A").c_str(), true);
-  mqttClient.publish("OE9XVI-PSU/NT1/Spannung", (String(v1, 2) + " V").c_str(), true);
+  mqttClient.publish((baseTopic + "/PSU_OE9XVI/BAT/Strom").c_str(), (String(c00, 2) + " A").c_str(), true);
+  mqttClient.publish((baseTopic + "/PSU_OE9XVI/BAT/Spannung").c_str(), (String(v0, 2) + " V").c_str(), true);
 
-  mqttClient.publish("OE9XVI-PSU/NT2/Strom", (String(c22, 2) + " A").c_str(), true);
-  mqttClient.publish("OE9XVI-PSU/NT2/Spannung", (String(v2, 2) + " V").c_str(), true);
+  mqttClient.publish((baseTopic + "/PSU_OE9XVI/NT1/Strom").c_str(), (String(c11, 2) + " A").c_str(), true);
+  mqttClient.publish((baseTopic + "/PSU_OE9XVI/NT1/Spannung").c_str(), (String(v1, 2) + " V").c_str(), true);
 
-  mqttClient.publish("OE9XVI-PSU/NT3/Strom", (String(c33, 2) + " A").c_str(), true);
-  mqttClient.publish("OE9XVI-PSU/NT3/Spannung", (String(v3, 2) + " V").c_str(), true);
+  mqttClient.publish((baseTopic + "/PSU_OE9XVI/NT2/Strom").c_str(), (String(c22, 2) + " A").c_str(), true);
+  mqttClient.publish((baseTopic + "/PSU_OE9XVI/NT2/Spannung").c_str(), (String(v2, 2) + " V").c_str(), true);
+
+  mqttClient.publish((baseTopic + "/PSU_OE9XVI/NT3/Strom").c_str(), (String(c33, 2) + " A").c_str(), true);
+  mqttClient.publish((baseTopic + "/PSU_OE9XVI/NT3/Spannung").c_str(), (String(v3, 2) + " V").c_str(), true);
+}
+
+void publishSystemStatus() {
+  String baseTopic = String(mqttConfig.topic);
+  String sysTopic = baseTopic + "/PSU_OE9XVI/system";
+  mqttClient.publish((sysTopic + "/wifi_rssi").c_str(), String(WiFi.RSSI()).c_str(), true);
+  mqttClient.publish((sysTopic + "/sketch_size").c_str(), String(ESP.getSketchSize()).c_str(), true);
+  mqttClient.publish((sysTopic + "/heap").c_str(), String(ESP.getFreeHeap()).c_str(), true);
+  mqttClient.publish((sysTopic + "/uptime_sec").c_str(), String(millis() / 1000).c_str(), true);
 }
 
 // ========== Loop ==========
@@ -334,5 +352,13 @@ if (now - lastPublish > 5000) {
     publishAllPsuValues();
   }
   lastPublish = now;
+}
+
+// Neue Systemstatus-Publikation alle 30 Sekunden
+if (now - lastSystemPublish > systemPublishInterval) {
+  if (mqttClient.connected()) {
+    publishSystemStatus();
+  }
+  lastSystemPublish = now;
 }
 }
