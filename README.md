@@ -7,7 +7,7 @@ Technical Specifications:
 * Current Measurement Range: up to 13-15A per channel (when PCB traces are properly soldered (~0,3 mm) around 20A
 * Sensor: INA226 (bidirectional current and voltage sensor with high accuracy)
 * Microcontroller: Wemos D1 (ESP8266) for WiFi connectivity and data transmission
-* Communication: Wireless data streaming via WiFi for remote dasboard monitoring or MQTT
+* Communication: Wireless data streaming via WiFi for remote dasboard monitoring and sending to MQTT broker
 * Applications: Multi-channel power consumption monitoring, load analysis, and energy management
 
 
