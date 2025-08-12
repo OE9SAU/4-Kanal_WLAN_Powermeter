@@ -95,7 +95,7 @@ void handleRoot() {
 
   String html = "<!DOCTYPE html><html lang='de'><head><meta charset='UTF-8'>"
                 "<meta name='viewport' content='width=device-width, initial-scale=1'>"
-                "<title>OE9XVI PSU-Monitor</title>"
+                "<title>PSU-Monitor</title>"
                 "<meta http-equiv='refresh' content='5'>"
                 "<link rel='icon' href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔋</text></svg>'>"
                 "<style>"
@@ -132,7 +132,7 @@ void handleRoot() {
                 "  td {font-size: 1em;}"
                 "}"
                 "</style></head><body>"
-                "<h1>OE9XVI Powersupply Monitor</h1>"
+                "<h1>Powersupply Monitor</h1>"
                 "<div class='release'>" + String(Release) + "</div>";
 
   // WLAN-Signalstärke-Icon
@@ -224,7 +224,7 @@ void setup() {
   display.setFont(ArialMT_Plain_10);
   display.setTextAlignment(TEXT_ALIGN_LEFT);
   display.clear();
-  display.drawString(0, 0, "OE9XVI PSU-Monitor");
+  display.drawString(0, 0, "PSU-Monitor");
   display.drawString(0, 12, Release);
   display.display();
   delay(1500);
@@ -242,7 +242,7 @@ void setup() {
   WiFiManager wifiManager;
   display.drawString(0, 36, "Starte WiFi-Setup...");
   display.display();
-  if (!wifiManager.autoConnect("OE9XVI-PSU-Monitor-AP")) {
+  if (!wifiManager.autoConnect("PSU-Monitor-AP")) {
     Serial.println("WLAN fehlgeschlagen. Neustart...");
     display.drawString(0, 48, "WLAN fehlgeschlagen");
     display.display();
@@ -299,22 +299,22 @@ void setup() {
 void publishAllPsuValues() {
   String baseTopic = String(mqttConfig.topic);  // Basis-Topic aus den Einstellungen
 
-  mqttClient.publish((baseTopic + "/PSU_OE9XVI/BAT/Strom").c_str(), (String(c00, 2) + " A").c_str(), true);
-  mqttClient.publish((baseTopic + "/PSU_OE9XVI/BAT/Spannung").c_str(), (String(v0, 2) + " V").c_str(), true);
+  mqttClient.publish((baseTopic + "/PSU_MONITOR/CH1/Strom").c_str(), (String(c00, 2) + " A").c_str(), true);
+  mqttClient.publish((baseTopic + "/PSU_MONITOR/CH1/Spannung").c_str(), (String(v0, 2) + " V").c_str(), true);
 
-  mqttClient.publish((baseTopic + "/PSU_OE9XVI/NT1/Strom").c_str(), (String(c11, 2) + " A").c_str(), true);
-  mqttClient.publish((baseTopic + "/PSU_OE9XVI/NT1/Spannung").c_str(), (String(v1, 2) + " V").c_str(), true);
+  mqttClient.publish((baseTopic + "/PSU_MONITOR/CH2/Strom").c_str(), (String(c11, 2) + " A").c_str(), true);
+  mqttClient.publish((baseTopic + "/PSU_MONITOR/CH2/Spannung").c_str(), (String(v1, 2) + " V").c_str(), true);
 
-  mqttClient.publish((baseTopic + "/PSU_OE9XVI/NT2/Strom").c_str(), (String(c22, 2) + " A").c_str(), true);
-  mqttClient.publish((baseTopic + "/PSU_OE9XVI/NT2/Spannung").c_str(), (String(v2, 2) + " V").c_str(), true);
+  mqttClient.publish((baseTopic + "/PSU_MONITOR/CH3/Strom").c_str(), (String(c22, 2) + " A").c_str(), true);
+  mqttClient.publish((baseTopic + "/PSU_MONITOR/CH3/Spannung").c_str(), (String(v2, 2) + " V").c_str(), true);
 
-  mqttClient.publish((baseTopic + "/PSU_OE9XVI/NT3/Strom").c_str(), (String(c33, 2) + " A").c_str(), true);
-  mqttClient.publish((baseTopic + "/PSU_OE9XVI/NT3/Spannung").c_str(), (String(v3, 2) + " V").c_str(), true);
+  mqttClient.publish((baseTopic + "/PSU_MONITOR/CH4/Strom").c_str(), (String(c33, 2) + " A").c_str(), true);
+  mqttClient.publish((baseTopic + "/PSU_MONITOR/CH4/Spannung").c_str(), (String(v3, 2) + " V").c_str(), true);
 }
 
 void publishSystemStatus() {
   String baseTopic = String(mqttConfig.topic);
-  String sysTopic = baseTopic + "/PSU_OE9XVI/system";
+  String sysTopic = baseTopic + "/PSU_MONITOR/system";
   mqttClient.publish((sysTopic + "/wifi_rssi").c_str(), String(WiFi.RSSI()).c_str(), true);
   mqttClient.publish((sysTopic + "/sketch_size").c_str(), String(ESP.getSketchSize()).c_str(), true);
   mqttClient.publish((sysTopic + "/heap").c_str(), String(ESP.getFreeHeap()).c_str(), true);
@@ -339,15 +339,15 @@ void loop() {
   // OLED-Anzeige
   display.clear();
   display.setFont(ArialMT_Plain_10);
-  display.drawString(0, 0, "OE9XVI PSU-Monitor");
+  display.drawString(0, 0, "PSU-Monitor");
   display.drawString(0, 12, Release);
 
   drawWifiSignal(WiFi.RSSI());
 
-  display.drawString(0, 30, "BAT: " + String(c00, 2) + "A " + String(v0, 2) + "V");
-  display.drawString(0, 44, "NT1: " + String(c11, 2) + "A " + String(v1, 2) + "V");
-  display.drawString(0, 58, "NT2: " + String(c22, 2) + "A " + String(v2, 2) + "V");
-  display.drawString(0, 72, "NT3: " + String(c33, 2) + "A " + String(v3, 2) + "V");
+  display.drawString(0, 30, "CH1: " + String(c00, 2) + "A " + String(v0, 2) + "V");
+  display.drawString(0, 44, "CH2: " + String(c11, 2) + "A " + String(v1, 2) + "V");
+  display.drawString(0, 58, "CH3: " + String(c22, 2) + "A " + String(v2, 2) + "V");
+  display.drawString(0, 72, "CH4: " + String(c33, 2) + "A " + String(v3, 2) + "V");
 
   display.display();
 
