@@ -3,7 +3,7 @@ Partlist 4-Kanal_WLAN_Powermeter
 **********************************
 4x INA226AIDGSR 									(LCSC: C49851)
 4x 3W 2mΩ 2512										(LCSC: C7420017)
-18x PP Kontakt PCB, gewinkelt, kurz SW10001 		(Funk24: 2x SW10001)
+16x PP Kontakt PCB, gewinkelt, kurz SW10001 		(Funk24: 2x SW10001)
 8x PP Gehäuse rot
 8x PP Gehäuse schwarz
 
